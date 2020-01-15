@@ -35,7 +35,6 @@ public class installer {
             }
             exitButton.setEnabled(true);
         });
-
         exitButton.addActionListener(e -> {
             frame.dispose();
         });
