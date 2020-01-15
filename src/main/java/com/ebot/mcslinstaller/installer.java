@@ -40,7 +40,7 @@ public class installer {
         });
     }
 
-    public void StartForm(int x, int y) {
+    public void StartForm() {
         frame = new JFrame("Welcome to MCSL installer");
         frame.setContentPane(new installer().panel1);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
