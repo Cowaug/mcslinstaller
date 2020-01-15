@@ -23,21 +23,44 @@ public class installer {
         installButton.addActionListener(e -> {
             label.setText("Downloading...");
             exitButton.setEnabled(false);
-            try {
-                new File(Main.path).mkdir();
-                Files.copy(Main.class.getResourceAsStream("/Minecraft.ico"), Paths.get(Main.path + "\\" + "Minecraft.ico"), StandardCopyOption.REPLACE_EXISTING);
-                InputStream in = new URL("https://raw.githubusercontent.com/exos288/minecraft-server-launcher/master/out/artifacts/MinecraftServerLauncher.jar").openStream();
-                Files.copy(in, Paths.get(Main.path + "\\" + "MinecraftServerLauncher.jar"), StandardCopyOption.REPLACE_EXISTING);
-                ShellLink.createLink(Main.javaPath + "\\javaw.exe").setCMDArgs("-jar MinecraftServerLauncher.jar").setWorkingDir(Main.path).setIconLocation(Main.path + "\\" + "Minecraft.ico").saveTo(Main.desktopPath + "\\" + "Minecraft Server.lnk");
-                label.setText("Install completed.");
-            } catch (IOException ex) {
-                label.setText("Install failed: " + ex.getMessage());
-            }
-            exitButton.setEnabled(true);
+            installButton.setEnabled(false);
+            new Thread(() -> {
+                try {
+                    new File(Main.path).mkdir();
+                    Files.copy(Main.class.getResourceAsStream("/Minecraft.ico"), Paths.get(Main.path + "\\" + "Minecraft.ico"), StandardCopyOption.REPLACE_EXISTING);
+                    InputStream in = new URL("https://raw.githubusercontent.com/exos288/minecraft-server-launcher/master/out/artifacts/MinecraftServerLauncher.jar").openStream();
+                    Files.copy(in, Paths.get(Main.path + "\\" + "MinecraftServerLauncher.jar"), StandardCopyOption.REPLACE_EXISTING);
+                    ShellLink.createLink(Main.javaPath + "\\javaw.exe").setCMDArgs("-jar MinecraftServerLauncher.jar").setWorkingDir(Main.path).setIconLocation(Main.path + "\\" + "Minecraft.ico").saveTo(Main.desktopPath + "\\" + "Minecraft Server.lnk");
+                    done("Install completed.");
+                } catch (IOException ex) {
+                    done("Install failed: " + ex.getMessage());
+                }
+            }).start();
         });
         exitButton.addActionListener(e -> {
             frame.dispose();
         });
+    }
+
+    private void done(final String message) {
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(() -> done(message));
+            return;
+        }
+        if (message != null) {
+            label.setText(message);
+            int w = frame.getWidth();
+            int h = frame.getHeight();
+            frame.setContentPane(this.panel1);
+            frame.pack();
+            frame.setVisible(true);
+            frame.setSize(w, h);
+            exitButton.setEnabled(true);
+            if (message.contains("failed")) {
+                installButton.setEnabled(true);
+                installButton.setText("Retry");
+            }
+        }
     }
 
     public void StartForm() {
