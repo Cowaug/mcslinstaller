@@ -19,6 +19,9 @@ public class installer {
     private JButton exitButton;
     private JLabel label;
 
+    /**
+     * Add Install and Cancel function to button
+     */
     public installer() {
         installButton.addActionListener(e -> {
             label.setText("Downloading...");
@@ -26,6 +29,7 @@ public class installer {
             installButton.setEnabled(false);
             new Thread(() -> {
                 try {
+                    // Get MCSL from github
                     new File(Main.path).mkdir();
                     Files.copy(Main.class.getResourceAsStream("/Minecraft.ico"), Paths.get(Main.path + "\\" + "Minecraft.ico"), StandardCopyOption.REPLACE_EXISTING);
                     InputStream in = new URL("https://raw.githubusercontent.com/exos288/minecraft-server-launcher/master/out/artifacts/MinecraftServerLauncher.jar").openStream();
@@ -42,6 +46,10 @@ public class installer {
         });
     }
 
+    /**
+     * Change UI to notify user the installation has completed
+     * @param message
+     */
     private void done(final String message) {
         if (!SwingUtilities.isEventDispatchThread()) {
             SwingUtilities.invokeLater(() -> done(message));
@@ -63,6 +71,9 @@ public class installer {
         }
     }
 
+    /**
+     * Open form
+     */
     public void StartForm() {
         frame = new JFrame("Welcome to MCSL installer");
         frame.setContentPane(new installer().panel1);
